@@ -3,7 +3,7 @@
 
 using boost::asio::io_context;
 using boost::asio::ip::tcp;
-
+using boost::asio::ip::address;
 
 int main(int argc, char* argv[]) {
     if (argc != 3) {
@@ -12,16 +12,21 @@ int main(int argc, char* argv[]) {
     }
 
     io_context ioc;
+    auto strand = boost::asio::make_strand(ioc);
+    boost::asio::post(strand, []() {});
+
     tcp::socket s(ioc);
-    tcp::resolver  resolver(ioc);
-    boost::asio::connect(s, resolver.resolve(argv[1], argv[2]));
+    tcp::endpoint endpoint(address::from_string(argv[1]), std::stoi(argv[2]));
+    s.connect(endpoint);
+
+    std::cout << s.local_endpoint() << " " << s.remote_endpoint() << std::endl;
 
     boost::asio::streambuf buf;
     std::istream in(&buf);
 
     std::string data;
 
-    while (true) {
+    while (!data.starts_with("exit")) {
         std::getline(std::cin, data);
         data += '\n';
 
