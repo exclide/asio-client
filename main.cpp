@@ -16,21 +16,24 @@ int main(int argc, char* argv[]) {
     tcp::resolver  resolver(ioc);
     boost::asio::connect(s, resolver.resolve(argv[1], argv[2]));
 
-    size_t readSize = 128;
+    boost::asio::streambuf buf;
+    std::istream in(&buf);
+
+    std::string data;
 
     while (true) {
-        std::string input;
-        std::getline(std::cin, input);
-        input.push_back('\n');
+        std::getline(std::cin, data);
+        data.push_back('\n');
 
-        boost::asio::write(s, boost::asio::buffer(input));
+        boost::asio::write(s, boost::asio::buffer(data));
 
-        std::string output;
-        output.resize(readSize);
 
-        s.read_some(boost::asio::buffer(output));
+        boost::asio::read_until(s,buf,"\n");
+        std::getline(in, data);
 
-        std::cout << output;
+        std::cout << data << "\n";
+
+        buf.consume(buf.size());
     }
 
     return EXIT_SUCCESS;
