@@ -23,10 +23,9 @@ int main(int argc, char* argv[]) {
 
     while (true) {
         std::getline(std::cin, data);
-        data.push_back('\n');
+        data += '\n';
 
         boost::asio::write(s, boost::asio::buffer(data));
-
 
         boost::asio::read_until(s,buf,"\n");
         std::getline(in, data);
