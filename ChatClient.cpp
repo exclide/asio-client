@@ -9,16 +9,26 @@ ChatClient::ChatClient(io_context &ioc, tcp::endpoint &endpoint) : socket(ioc) {
 }
 
 void ChatClient::Write(const std::string &msg) {
-    auto ss = std::make_shared<std::string>(msg);
-
-    boost::asio::post(socket.get_executor(), [this, ss]() {
-        DoWrite(ss);
+    boost::asio::post(socket.get_executor(), [this, msg]() {
+        sendq.push(msg);
+        //нужна очередь, чтобы избежать вызовов async_write до завершения предыдущих записей
+        if (sendq.size() == 1) {
+            DoWrite();
+        }
     });
 }
 
-void ChatClient::DoWrite(const std::shared_ptr<std::string> &ss) {
-    boost::asio::async_write(socket, boost::asio::buffer(*ss),
-                             [ss] (error_code err, size_t bytes) {});
+void ChatClient::DoWrite() {
+    boost::asio::async_write(
+            socket,
+            boost::asio::buffer(sendq.front()),
+            [this] (error_code err, size_t bytes) {
+                sendq.pop();
+
+                if (!sendq.empty()) {
+                    DoWrite();
+                }
+            });
 }
 
 void ChatClient::DoConnect(tcp::endpoint &endpoint) {
