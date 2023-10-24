@@ -4,8 +4,7 @@
 
 #include "ChatClient.h"
 
-ChatClient::ChatClient(io_context &ioc, tcp::endpoint &endpoint) : socket(ioc) {
-    DoConnect(endpoint);
+ChatClient::ChatClient(io_context &ioc) : socket(ioc) {
 }
 
 void ChatClient::Write(const std::string &msg) {
@@ -23,7 +22,9 @@ void ChatClient::DoWrite() {
             socket,
             boost::asio::buffer(sendq.front()),
             [this] (error_code err, size_t bytes) {
-                sendq.pop();
+                if (!err) {
+                    sendq.pop();
+                }
 
                 if (!sendq.empty()) {
                     DoWrite();
@@ -31,9 +32,18 @@ void ChatClient::DoWrite() {
             });
 }
 
-void ChatClient::DoConnect(tcp::endpoint &endpoint) {
+void ChatClient::StartConnect(const tcp::endpoint& endpoint) {
+    boost::asio::post(socket.get_executor(), [this, endpoint] () {
+        DoConnect(endpoint);
+    });
+}
+
+void ChatClient::DoConnect(const tcp::endpoint &endpoint) {
     socket.async_connect(endpoint, [this](error_code ec) {
-        DoRead();
+        if (!ec) {
+            emit ConnectedToServer();
+            DoRead();
+        }
     });
 }
 
@@ -43,8 +53,12 @@ void ChatClient::DoRead() {
             boost::asio::dynamic_buffer(data),
             "\n",
             [this] (error_code ec, std::size_t bytes) {
-                std::cout << data;
-                data.clear();
+                if (!ec) {
+                    data.pop_back();
+                    emit MessageReceived(data);
+                    data.clear();
+                }
+
                 DoRead();
             });
 }

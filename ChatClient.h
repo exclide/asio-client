@@ -7,20 +7,30 @@
 
 #include "Asio.h"
 #include <queue>
+#include <QWidget>
+#include <QObject>
 
-class ChatClient {
+class ChatClient : public QObject {
+Q_OBJECT
+Q_DISABLE_COPY(ChatClient)
+
 public:
-    ChatClient(io_context& ioc, tcp::endpoint& endpoint);
+    ChatClient(io_context& ioc);
 
     void Write(const std::string& msg);
     void DoWrite();
-    void DoConnect(tcp::endpoint& endpoint);
+    void StartConnect(const tcp::endpoint& endpoint);
+    void DoConnect(const tcp::endpoint& endpoint);
     void DoRead();
 
 private:
     tcp::socket socket;
     std::string data;
     std::queue<std::string> sendq;
+
+signals:
+    void MessageReceived(std::string msg);
+    void ConnectedToServer();
 };
 
 

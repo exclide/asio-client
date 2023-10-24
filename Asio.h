@@ -5,7 +5,6 @@
 #ifndef ASIO_CLIENT_ASIO_H
 #define ASIO_CLIENT_ASIO_H
 
-#include <iostream>
 #include <boost/asio.hpp>
 
 using boost::asio::io_context;

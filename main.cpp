@@ -1,28 +1,16 @@
-#include "ChatClient.h"
+#include <QApplication>
+#include <QPushButton>
+#include "ChatWindow.h"
+#include "Asio.h"
 
-int main(int argc, char* argv[]) {
-    if (argc != 3) {
-        std::cerr << "Correct usage: client <ip> <port>\n";
-        return EXIT_FAILURE;
-    }
-
+int main(int argc, char *argv[]) {
     io_context ioc;
-    tcp::endpoint endpoint(address::from_string(argv[1]), std::stoi(argv[2]));
+    auto workGuard = boost::asio::make_work_guard(ioc);
+    std::thread{[&ioc] { ioc.run(); }}.detach();
 
-    ChatClient client(ioc, endpoint);
+    QApplication app{argc, argv};
+    ChatWindow chatWindow{new ChatClient{ioc}};
+    chatWindow.show();
 
-    std::thread t([&ioc]() { ioc.run(); });
-
-    std::string data;
-
-    while (!data.starts_with("exit")) {
-        std::getline(std::cin, data);
-        data += '\n';
-
-        client.Write(data);
-    }
-
-    t.join();
-
-    return EXIT_SUCCESS;
+    return QApplication::exec();
 }
