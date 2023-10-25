@@ -18,16 +18,17 @@ ChatWindow::ChatWindow(ChatClient* client) :
     chatModel->insertColumn(0);
     ui->list_msgbox->setModel(chatModel);
 
-    connect(ui->button_send, &QPushButton::clicked, this, &ChatWindow::SendButtonClicked);
-    connect(ui->button_connect, &QPushButton::clicked, this, &ChatWindow::ConnectButtonClicked);
-    connect(this->client, &ChatClient::MessageReceived, this, &ChatWindow::MessageReceived);
+    connect(ui->button_send, &QPushButton::clicked, this, &ChatWindow::SendChatMessage);
+    connect(ui->button_connect, &QPushButton::clicked, this, &ChatWindow::ConnectToServer);
+    connect(ui->line_msg, &QLineEdit::returnPressed, this, &ChatWindow::SendChatMessage);
+    connect(this->client, &ChatClient::MessageReceived, this, &ChatWindow::ReceiveChatMessage);
 }
 
 ChatWindow::~ChatWindow() {
     delete ui;
 }
 
-void ChatWindow::SendButtonClicked() {
+void ChatWindow::SendChatMessage() {
     std::string msg = ui->line_msg->text().toStdString();
     msg += "\n";
     ui->line_msg->clear();
@@ -35,7 +36,7 @@ void ChatWindow::SendButtonClicked() {
     client->Write(msg);
 }
 
-void ChatWindow::MessageReceived(const std::string& msg) {
+void ChatWindow::ReceiveChatMessage(const std::string& msg) {
     QString qmsg = QString::fromStdString(msg);
 
     int newRow = chatModel->rowCount();
@@ -46,7 +47,7 @@ void ChatWindow::MessageReceived(const std::string& msg) {
     ui->list_msgbox->scrollToBottom();
 }
 
-void ChatWindow::ConnectButtonClicked() {
+void ChatWindow::ConnectToServer() {
     const std::string ip = ui->line_ip->text().toStdString();
     const int port = ui->line_port->text().toInt();
 

@@ -22,9 +22,9 @@ public:
     ~ChatWindow() override;
 
 private slots:
-    void SendButtonClicked();
-    void ConnectButtonClicked();
-    void MessageReceived(const std::string& msg);
+    void SendChatMessage();
+    void ConnectToServer();
+    void ReceiveChatMessage(const std::string& msg);
 
 private:
     Ui::ChatWindow *ui;
