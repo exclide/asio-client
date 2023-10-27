@@ -8,9 +8,8 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_PREFIX_PATH "C:\\Qt\\6.5.3\\mingw_64\\")
 
 
-#boost
-include_directories($ENV{BOOST_ROOT})
-add_definitions(-O3)
+find_package(Boost REQUIRED)
+find_package(OpenSSL REQUIRED)
 
 find_package(Qt6 COMPONENTS
         Core
@@ -19,12 +18,15 @@ find_package(Qt6 COMPONENTS
         REQUIRED)
 
 add_executable(asio_client main.cpp ChatWindow.cpp ChatClient.cpp)
+include_directories(asio_client ${Boost_INCLUDE_DIRS})
+
 target_link_libraries(asio_client
         Qt::Core
         Qt::Gui
         Qt::Widgets
         ws2_32
         wsock32
+        OpenSSL::SSL
         )
 
 set_target_properties(asio_client PROPERTIES

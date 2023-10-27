@@ -4,7 +4,12 @@
 
 #include "ChatClient.h"
 
-ChatClient::ChatClient(io_context &ioc) : socket(ioc) {
+ChatClient::ChatClient(io_context& ioc, boost::asio::ssl::context& ctx) : socket(ioc, ctx) {
+    socket.set_verify_mode(boost::asio::ssl::verify_peer);
+    socket.set_verify_callback(
+            [](bool preverified, boost::asio::ssl::verify_context& ctx){
+                return preverified;
+            });
 }
 
 void ChatClient::Write(const std::string &msg) {
@@ -39,12 +44,22 @@ void ChatClient::StartConnect(const tcp::endpoint& endpoint) {
 }
 
 void ChatClient::DoConnect(const tcp::endpoint &endpoint) {
-    socket.async_connect(endpoint, [this](error_code ec) {
+    socket.lowest_layer().async_connect(endpoint, [this](error_code ec) {
         if (!ec) {
-            emit ConnectedToServer();
-            DoRead();
+            DoHandshake();
         }
     });
+}
+
+void ChatClient::DoHandshake() {
+    socket.async_handshake(
+            boost::asio::ssl::stream_base::client,
+            [this](error_code err) {
+                if (!err) {
+                    emit ConnectedToServer();
+                    DoRead();
+                }
+            });
 }
 
 void ChatClient::DoRead() {
