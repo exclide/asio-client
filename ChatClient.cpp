@@ -4,12 +4,10 @@
 
 #include "ChatClient.h"
 
-ChatClient::ChatClient(io_context& ioc, boost::asio::ssl::context& ctx) : socket(ioc, ctx) {
-    socket.set_verify_mode(boost::asio::ssl::verify_peer);
-    socket.set_verify_callback(
-            [](bool preverified, boost::asio::ssl::verify_context& ctx){
-                return preverified;
-            });
+ChatClient::ChatClient(io_context& ioc, ssl::context& ctx) : socket(ioc, ctx) {
+    socket.set_verify_mode(ssl::verify_peer);
+    socket.set_verify_callback(ssl::host_name_verification("usr"));
+
 }
 
 void ChatClient::Write(const std::string &msg) {

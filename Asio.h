@@ -12,5 +12,6 @@ using boost::asio::io_context;
 using boost::asio::ip::tcp;
 using boost::asio::ip::address;
 using boost::system::error_code;
+namespace ssl = boost::asio::ssl;
 
 #endif //ASIO_CLIENT_ASIO_H

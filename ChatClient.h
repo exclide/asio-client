@@ -15,7 +15,7 @@ Q_OBJECT
 Q_DISABLE_COPY(ChatClient)
 
 public:
-    ChatClient(io_context& ioc, boost::asio::ssl::context& ctx);
+    ChatClient(io_context& ioc, ssl::context& ctx);
 
     void Write(const std::string& msg);
     void DoWrite();
@@ -26,7 +26,7 @@ public:
 
 private:
     //tcp::socket socket;
-    boost::asio::ssl::stream<tcp::socket> socket;
+    ssl::stream<tcp::socket> socket;
     std::string data;
     std::queue<std::string> sendq;
 
