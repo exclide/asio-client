@@ -1,77 +1,54 @@
 //
-// Created by asd on 23-Oct-23.
+// Created by asd on 28-Oct-23.
 //
 
 #include "ChatClient.h"
+#include <iostream>
 
-ChatClient::ChatClient(io_context& ioc, ssl::context& ctx) : socket(ioc, ctx) {
-    socket.set_verify_mode(ssl::verify_peer);
-    socket.set_verify_callback(ssl::host_name_verification("usr"));
+ChatClient::ChatClient() : socket(new QSslSocket){
+    ConfigureSocketForSsl();
 
+    QObject::connect(socket, &QSslSocket::sslErrors, this, &ChatClient::SslErrors);
+    QObject::connect(socket, &QSslSocket::readyRead, this, &ChatClient::DoRead);
+    QObject::connect(socket, &QSslSocket::encrypted, this, &ChatClient::DebugHandshake);
+    QObject::connect(socket, &QSslSocket::bytesWritten, this, &ChatClient::DebugWrittenBytes);
 }
 
-void ChatClient::Write(const std::string &msg) {
-    boost::asio::post(socket.get_executor(), [this, msg]() {
-        sendq.push(msg);
-        //нужна очередь, чтобы избежать вызовов async_write до завершения предыдущих записей
-        if (sendq.size() == 1) {
-            DoWrite();
-        }
-    });
+
+void ChatClient::Connect(const QString &ip, int port) {
+    qDebug() << "Attemnt connect";
+    socket->connectToHostEncrypted(ip, port);
 }
 
-void ChatClient::DoWrite() {
-    boost::asio::async_write(
-            socket,
-            boost::asio::buffer(sendq.front()),
-            [this] (error_code err, size_t bytes) {
-                if (!err) {
-                    sendq.pop();
-                }
-
-                if (!sendq.empty()) {
-                    DoWrite();
-                }
-            });
+void ChatClient::SslErrors(const QList<QSslError> &errors) {
+    qDebug() << errors;
 }
 
-void ChatClient::StartConnect(const tcp::endpoint& endpoint) {
-    boost::asio::post(socket.get_executor(), [this, endpoint] () {
-        DoConnect(endpoint);
-    });
+void ChatClient::DebugWrittenBytes(qint64 bytes) {
+    qDebug() << "Bytes written: " << bytes;
 }
 
-void ChatClient::DoConnect(const tcp::endpoint &endpoint) {
-    socket.lowest_layer().async_connect(endpoint, [this](error_code ec) {
-        if (!ec) {
-            DoHandshake();
-        }
-    });
+void ChatClient::DebugHandshake() {
+    qDebug() << "Handshake successful";
 }
 
-void ChatClient::DoHandshake() {
-    socket.async_handshake(
-            boost::asio::ssl::stream_base::client,
-            [this](error_code err) {
-                if (!err) {
-                    emit ConnectedToServer();
-                    DoRead();
-                }
-            });
+void ChatClient::Write(const QString &msg) {
+    socket->write(msg.toLocal8Bit());
 }
 
 void ChatClient::DoRead() {
-    boost::asio::async_read_until(
-            socket,
-            boost::asio::dynamic_buffer(data),
-            "\n",
-            [this] (error_code ec, std::size_t bytes) {
-                if (!ec) {
-                    data.pop_back();
-                    emit MessageReceived(data);
-                    data.clear();
-                }
+    QString str = socket->readLine();
+    emit MessageReceived(str);
+}
 
-                DoRead();
-            });
+
+void ChatClient::ConfigureSocketForSsl() {
+    qDebug() << "Ver: " <<  QSslSocket::sslLibraryBuildVersionString();
+
+    QSslConfiguration cfg = socket->sslConfiguration();
+    cfg.setProtocol(QSsl::TlsV1_3OrLater);
+    cfg.addCaCertificates("../ssl/rootca.crt", QSsl::Pem);
+    socket->setSslConfiguration(cfg);
+    socket->setPeerVerifyName("usr"); //verify cert CN
+    socket->setPeerVerifyMode(QSslSocket::VerifyPeer); //verify server cert is valid loaded CA
 }

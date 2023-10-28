@@ -8,11 +8,12 @@
 #include "ui_ChatWindow.h"
 
 
-ChatWindow::ChatWindow(ChatClient* client) :
+ChatWindow::ChatWindow(ChatClient* chatClient) :
         QWidget(nullptr),
         ui(new Ui::ChatWindow),
         chatModel(new QStandardItemModel(this)),
-        client(client) {
+        chatClient(chatClient) {
+
     ui->setupUi(this);
 
     chatModel->insertColumn(0);
@@ -21,7 +22,7 @@ ChatWindow::ChatWindow(ChatClient* client) :
     connect(ui->button_send, &QPushButton::clicked, this, &ChatWindow::SendChatMessage);
     connect(ui->button_connect, &QPushButton::clicked, this, &ChatWindow::ConnectToServer);
     connect(ui->line_msg, &QLineEdit::returnPressed, this, &ChatWindow::SendChatMessage);
-    connect(this->client, &ChatClient::MessageReceived, this, &ChatWindow::ReceiveChatMessage);
+    connect(this->chatClient, &ChatClient::MessageReceived, this, &ChatWindow::ReceiveChatMessage);
 }
 
 ChatWindow::~ChatWindow() {
@@ -29,15 +30,16 @@ ChatWindow::~ChatWindow() {
 }
 
 void ChatWindow::SendChatMessage() {
-    std::string msg = ui->line_msg->text().toStdString();
-    msg += "\n";
+    auto msg = ui->line_msg->text();
+    msg += '\n';
     ui->line_msg->clear();
 
-    client->Write(msg);
+    chatClient->Write(msg);
 }
 
-void ChatWindow::ReceiveChatMessage(const std::string& msg) {
-    QString qmsg = QString::fromStdString(msg);
+void ChatWindow::ReceiveChatMessage(const QString& msg) {
+    qDebug() << "Received message: " << msg;
+    QString qmsg = msg.chopped(1);
 
     int newRow = chatModel->rowCount();
 
@@ -48,8 +50,8 @@ void ChatWindow::ReceiveChatMessage(const std::string& msg) {
 }
 
 void ChatWindow::ConnectToServer() {
-    const std::string ip = ui->line_ip->text().toStdString();
-    const int port = ui->line_port->text().toInt();
+    auto ip = ui->line_ip->text();
+    auto port = ui->line_port->text().toInt();
 
-    client->StartConnect(tcp::endpoint(address::from_string(ip), port));
+    chatClient->Connect(ip, port);
 }

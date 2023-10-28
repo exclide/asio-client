@@ -17,19 +17,19 @@ class ChatWindow : public QWidget {
 Q_OBJECT
 
 public:
-    explicit ChatWindow(ChatClient* client);
+    explicit ChatWindow(ChatClient* gavnoClient);
 
     ~ChatWindow() override;
 
 private slots:
     void SendChatMessage();
     void ConnectToServer();
-    void ReceiveChatMessage(const std::string& msg);
+    void ReceiveChatMessage(const QString& msg);
 
 private:
     Ui::ChatWindow *ui;
     QStandardItemModel *chatModel;
-    ChatClient* client;
+    ChatClient* chatClient;
 };
 
 

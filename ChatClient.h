@@ -1,39 +1,41 @@
 //
-// Created by asd on 23-Oct-23.
+// Created by asd on 28-Oct-23.
 //
 
-#ifndef ASIO_CLIENT_CHATCLIENT_H
-#define ASIO_CLIENT_CHATCLIENT_H
 
-#include "Asio.h"
-#include <queue>
-#include <QWidget>
+#ifndef ASIO_CLIENT_CCLIENT_H
+#define ASIO_CLIENT_CCLIENT_H
+
+#include <QSslSocket>
+#include <QSslConfiguration>
 #include <QObject>
 
 class ChatClient : public QObject {
 Q_OBJECT
-Q_DISABLE_COPY(ChatClient)
 
 public:
-    ChatClient(io_context& ioc, ssl::context& ctx);
+    ChatClient();
 
-    void Write(const std::string& msg);
-    void DoWrite();
-    void StartConnect(const tcp::endpoint& endpoint);
-    void DoConnect(const tcp::endpoint& endpoint);
+    void Connect(const QString& ip, int port);
+
+    void Write(const QString& msg);
+
     void DoRead();
-    void DoHandshake();
+
 
 private:
-    //tcp::socket socket;
-    ssl::stream<tcp::socket> socket;
-    std::string data;
-    std::queue<std::string> sendq;
+    void ConfigureSocketForSsl();
+
+    QSslSocket* socket;
 
 signals:
-    void MessageReceived(std::string msg);
-    void ConnectedToServer();
+    void MessageReceived(const QString& msg);
+
+private slots:
+    void SslErrors(const QList<QSslError> &errors);
+    void DebugWrittenBytes(qint64 bytes);
+    void DebugHandshake();
 };
 
 
-#endif //ASIO_CLIENT_CHATCLIENT_H
+#endif //ASIO_CLIENT_CCLIENT_H
