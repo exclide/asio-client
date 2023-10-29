@@ -21,10 +21,10 @@ set(libs OpenSSL::SSL Qt::Core Qt::Gui Qt::Widgets Qt::Network)
 add_executable(asio_client ${sources})
 target_link_libraries(asio_client ${libs})
 
-#set_target_properties(asio_client PROPERTIES
-#        WIN32_EXECUTABLE TRUE
-#        MACOSX_BUNDLE TRUE
-#        )
+set_target_properties(asio_client PROPERTIES
+        WIN32_EXECUTABLE TRUE
+        MACOSX_BUNDLE TRUE
+        )
 
 if (WIN32)
     set(DEBUG_SUFFIX)

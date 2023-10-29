@@ -3,7 +3,6 @@
 //
 
 #include "ChatClient.h"
-#include <iostream>
 
 ChatClient::ChatClient() : socket(new QSslSocket){
     ConfigureSocketForSsl();
