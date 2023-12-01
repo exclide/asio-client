@@ -17,7 +17,7 @@ class ChatWindow : public QWidget {
 Q_OBJECT
 
 public:
-    explicit ChatWindow(ChatClient* gavnoClient);
+    explicit ChatWindow(ChatClient* chatClient);
 
     ~ChatWindow() override;
 

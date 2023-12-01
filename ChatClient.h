@@ -9,32 +9,31 @@
 #include <QSslSocket>
 #include <QSslConfiguration>
 #include <QObject>
+#include <QtWebSockets/QtWebSockets>
 
 class ChatClient : public QObject {
 Q_OBJECT
 
 public:
     ChatClient();
-
     void Connect(const QString& ip, int port);
-
     void Write(const QString& msg);
-
-    void DoRead();
-
 
 private:
     void ConfigureSocketForSsl();
 
-    QSslSocket* socket;
+    QWebSocket ws;
 
 signals:
     void MessageReceived(const QString& msg);
 
 private slots:
     void SslErrors(const QList<QSslError> &errors);
-    void DebugWrittenBytes(qint64 bytes);
-    void DebugHandshake();
+    void OnMessageReceived(const QString& message);
+    void Connected();
+    void Disconnected();
+    void ErrorOccurred(QAbstractSocket::SocketError error);
+    void HandshakeInterrupted(const QSslError &error);
 };
 
 
