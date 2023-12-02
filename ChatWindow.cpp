@@ -55,3 +55,10 @@ void ChatWindow::ConnectToServer() {
 
     chatClient->Connect(ip, port);
 }
+
+void ChatWindow::Init() {
+    //make http get for contacts
+    //get history message for each contact
+
+    this->show();
+}

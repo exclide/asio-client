@@ -15,7 +15,11 @@ find_package(Qt6 COMPONENTS
         WebSockets
         REQUIRED)
 
-set(sources main.cpp ChatWindow.cpp ChatClient.cpp)
+set(sources main.cpp ChatWindow.cpp ChatClient.cpp
+        LoginWindow.cpp
+        LoginWindow.h
+        LoginWindow.ui
+        HostInfo.h)
 set(libs OpenSSL::SSL Qt::Core Qt::Gui Qt::Widgets Qt::Network Qt::WebSockets)
 
 add_executable(asio_client ${sources})

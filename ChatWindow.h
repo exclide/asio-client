@@ -26,6 +26,9 @@ private slots:
     void ConnectToServer();
     void ReceiveChatMessage(const QString& msg);
 
+public slots:
+    void Init();
+
 private:
     Ui::ChatWindow *ui;
     QStandardItemModel *chatModel;
