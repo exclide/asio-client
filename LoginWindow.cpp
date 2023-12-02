@@ -33,18 +33,9 @@ void LoginWindow::Login() {
     url.setPath("/api/login");
     req.setUrl(url);
     req.setHeader(QNetworkRequest::KnownHeaders::ContentTypeHeader, "application/json");
-    QNetworkReply* reply = network->post(req, data);
-    //send http auth request
-    if (reply->error()) {
-        qDebug() << reply->errorString();
-    } else {
-        qDebug() << "No error";
-    }
-    //need http client somewhere here
-
-    //if it returns OK, show chat window
-    this->close();
-    emit LoginSuccess();
+    //req.setRawHeader("Connection", "Keep-Alive");
+    loginReply = network->post(req, data);
+    connect(loginReply, &QNetworkReply::finished, this, &LoginWindow::OnLoginFinished);
 }
 
 
@@ -56,7 +47,9 @@ void LoginWindow::Register() {
 
     url.setPath("/api/users");
     req.setUrl(url);
-    network->post(req, data);
+    req.setHeader(QNetworkRequest::KnownHeaders::ContentTypeHeader, "application/json");
+    registerReply = network->post(req, data);
+    connect(registerReply, &QNetworkReply::finished, this, &LoginWindow::OnRegisterFinished);
 }
 
 void LoginWindow::ConfigureSsl() {
@@ -82,3 +75,44 @@ QByteArray LoginWindow::GetJsonData(const QString &login, const QString &pass) {
 
     return data;
 }
+
+void LoginWindow::OnRegisterFinished() {
+    if (registerReply->error() == QNetworkReply::NoError) {
+        QVariant statusCode = registerReply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
+        int status = statusCode.toInt();
+
+        QByteArray responseData = registerReply->readAll();
+        qDebug() << responseData;
+    } else {
+        qDebug() << "Network request error:" << registerReply->errorString();
+    }
+}
+
+void LoginWindow::OnLoginFinished() {
+    if (loginReply->error() == QNetworkReply::NoError) {
+        QVariant statusCode = loginReply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
+        int status = statusCode.toInt();
+
+        QByteArray responseData = loginReply->readAll();
+        qDebug() << responseData;
+        //get jwt token
+
+        if (status == 200) { //if login successful send websocket upgrade request
+            url.setScheme("wss");
+            url.setPath("/");
+            req.setUrl(url);
+            req.setRawHeader("Upgrade", "websocket");
+            req.setRawHeader("Connection", "upgrade");
+            req.setRawHeader("Sec-WebSocket-Key", "123456789");
+            req.setRawHeader("Sec-WebSocket-Version", "13");
+            //set jwt token
+            req.setRawHeader("Authorization", "Bearer Kek");
+
+            emit LoginSuccess(req);
+            this->close();
+        }
+    } else {
+        qDebug() << "Network request error:" << loginReply->errorString();
+    }
+}
+

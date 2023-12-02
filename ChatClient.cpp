@@ -15,13 +15,10 @@ ChatClient::ChatClient() {
 }
 
 
-void ChatClient::Connect(const QString &ip, int port) {
+void ChatClient::Connect(QNetworkRequest req) {
     qDebug() << "Attempt connect";
-    QUrl url;
-    url.setScheme("wss");
-    url.setHost(ip);
-    url.setPort(port);
-    ws.open(url);
+
+    ws.open(req);
 }
 
 void ChatClient::SslErrors(const QList<QSslError> &errors) {
@@ -31,6 +28,8 @@ void ChatClient::SslErrors(const QList<QSslError> &errors) {
 
 
 void ChatClient::Write(const QString &msg) {
+    qDebug() << "Write";
+    qDebug() << ws.state();
     ws.sendTextMessage(msg);
 }
 
@@ -59,8 +58,4 @@ void ChatClient::Disconnected() {
 
 void ChatClient::ErrorOccurred(QAbstractSocket::SocketError error) {
     qDebug() << "Error occurred: " << error << "\n";
-}
-
-void ChatClient::HandshakeInterrupted(const QSslError &error) {
-    qDebug() << "Handshake Interrupted on error: " << error << "\n";
 }

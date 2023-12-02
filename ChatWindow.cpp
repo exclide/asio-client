@@ -20,7 +20,6 @@ ChatWindow::ChatWindow(ChatClient* chatClient) :
     ui->list_msgbox->setModel(chatModel);
 
     connect(ui->button_send, &QPushButton::clicked, this, &ChatWindow::SendChatMessage);
-    connect(ui->button_connect, &QPushButton::clicked, this, &ChatWindow::ConnectToServer);
     connect(ui->line_msg, &QLineEdit::returnPressed, this, &ChatWindow::SendChatMessage);
     connect(this->chatClient, &ChatClient::MessageReceived, this, &ChatWindow::ReceiveChatMessage);
 }
@@ -30,6 +29,7 @@ ChatWindow::~ChatWindow() {
 }
 
 void ChatWindow::SendChatMessage() {
+    qDebug() << "SendChatMessage";
     auto msg = ui->line_msg->text();
     msg += '\n';
     ui->line_msg->clear();
@@ -49,16 +49,11 @@ void ChatWindow::ReceiveChatMessage(const QString& msg) {
     ui->list_msgbox->scrollToBottom();
 }
 
-void ChatWindow::ConnectToServer() {
-    auto ip = ui->line_ip->text();
-    auto port = ui->line_port->text().toInt();
 
-    chatClient->Connect(ip, port);
-}
-
-void ChatWindow::Init() {
+void ChatWindow::Init(QNetworkRequest req) {
     //make http get for contacts
     //get history message for each contact
+    chatClient->Connect(req);
 
     this->show();
 }

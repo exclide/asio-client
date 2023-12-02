@@ -16,7 +16,7 @@ Q_OBJECT
 
 public:
     ChatClient();
-    void Connect(const QString& ip, int port);
+    void Connect(QNetworkRequest req);
     void Write(const QString& msg);
 
 private:
@@ -33,7 +33,6 @@ private slots:
     void Connected();
     void Disconnected();
     void ErrorOccurred(QAbstractSocket::SocketError error);
-    void HandshakeInterrupted(const QSslError &error);
 };
 
 

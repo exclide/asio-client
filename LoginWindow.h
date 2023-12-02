@@ -25,17 +25,21 @@ private:
     Ui::LoginWindow* ui;
     QNetworkAccessManager* network = new QNetworkAccessManager();
     QNetworkRequest req;
+    QNetworkReply* loginReply;
+    QNetworkReply* registerReply;
     QUrl url;
 
     void ConfigureSsl();
     QByteArray GetJsonData(const QString& login, const QString& pass);
 
 signals:
-    void LoginSuccess();
+    void LoginSuccess(QNetworkRequest req);
 
 private slots:
     void Login();
     void Register();
+    void OnLoginFinished();
+    void OnRegisterFinished();
 };
 
 

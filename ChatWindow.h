@@ -23,11 +23,10 @@ public:
 
 private slots:
     void SendChatMessage();
-    void ConnectToServer();
     void ReceiveChatMessage(const QString& msg);
 
 public slots:
-    void Init();
+    void Init(QNetworkRequest req);
 
 private:
     Ui::ChatWindow *ui;
