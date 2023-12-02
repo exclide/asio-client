@@ -95,7 +95,8 @@ void LoginWindow::OnLoginFinished() {
 
         QByteArray responseData = loginReply->readAll();
         qDebug() << responseData;
-        //get jwt token
+        QJsonDocument doc = QJsonDocument::fromJson(responseData);
+        QJsonObject json = doc.object();
 
         if (status == 200) { //if login successful send websocket upgrade request
             url.setScheme("wss");
@@ -106,7 +107,7 @@ void LoginWindow::OnLoginFinished() {
             req.setRawHeader("Sec-WebSocket-Key", "123456789");
             req.setRawHeader("Sec-WebSocket-Version", "13");
             //set jwt token
-            req.setRawHeader("Authorization", "Bearer Kek");
+            req.setRawHeader("Authorization", json.value("Token").toString().toLocal8Bit());
 
             emit LoginSuccess(req);
             this->close();
