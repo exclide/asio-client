@@ -28,8 +28,6 @@ void ChatClient::SslErrors(const QList<QSslError> &errors) {
 
 
 void ChatClient::Write(const QString &msg) {
-    qDebug() << "Write";
-    qDebug() << ws.state();
     ws.sendTextMessage(msg);
 }
 

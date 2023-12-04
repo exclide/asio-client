@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.25)
+cmake_minimum_required(VERSION 3.26)
 project(asio_client)
 
 set(CMAKE_CXX_STANDARD 20)
@@ -19,13 +19,16 @@ set(sources main.cpp ChatWindow.cpp ChatClient.cpp
         LoginWindow.cpp
         LoginWindow.h
         LoginWindow.ui
-        HostInfo.h)
+        HostInfo.h
+        Test.cpp
+        Test.h
+        Test.ui
+        uiTest2.h
+        DbMessage.h
+        User.h
+        UiLoginWindow.h)
+
 set(libs OpenSSL::SSL Qt::Core Qt::Gui Qt::Widgets Qt::Network Qt::WebSockets)
 
 add_executable(asio_client ${sources})
 target_link_libraries(asio_client ${libs})
-
-set_target_properties(asio_client PROPERTIES
-        WIN32_EXECUTABLE TRUE
-        MACOSX_BUNDLE TRUE
-        )

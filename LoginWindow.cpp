@@ -5,10 +5,11 @@
 // You may need to build the project (run Qt uic code generator) to get "ui_LoginWindow.h" resolved
 
 #include "LoginWindow.h"
-#include "ui_LoginWindow.h"
+#include "UiLoginWindow.h"
 #include "ChatClient.h"
 #include "ChatWindow.h"
 #include "HostInfo.h"
+#include "User.h"
 
 LoginWindow::LoginWindow(QWidget *parent) :
         QWidget(parent), ui(new Ui::LoginWindow) {
@@ -28,7 +29,7 @@ void LoginWindow::Login() {
     auto login = ui->line_login->text();
     auto pass = ui->line_password->text();
 
-    auto data = GetJsonData(login, pass);
+    auto data = User{login, pass}.ToJsonByteArray();
 
     url.setPath("/api/login");
     req.setUrl(url);
@@ -43,7 +44,7 @@ void LoginWindow::Register() {
     auto login = ui->line_login->text();
     auto pass = ui->line_password->text();
 
-    auto data = GetJsonData(login, pass);
+    auto data = User{login, pass}.ToJsonByteArray();
 
     url.setPath("/api/users");
     req.setUrl(url);
@@ -66,20 +67,16 @@ void LoginWindow::ConfigureSsl() {
 
 }
 
-QByteArray LoginWindow::GetJsonData(const QString &login, const QString &pass) {
-    QJsonObject obj;
-    obj["login"] = login;
-    obj["password"] = pass;
-    QJsonDocument doc(obj);
-    QByteArray data = doc.toJson();
-
-    return data;
-}
 
 void LoginWindow::OnRegisterFinished() {
     if (registerReply->error() == QNetworkReply::NoError) {
         QVariant statusCode = registerReply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
         int status = statusCode.toInt();
+        if (status == 200) {
+
+        } else {
+
+        }
 
         QByteArray responseData = registerReply->readAll();
         qDebug() << responseData;

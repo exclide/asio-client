@@ -30,7 +30,6 @@ private:
     QUrl url;
 
     void ConfigureSsl();
-    QByteArray GetJsonData(const QString& login, const QString& pass);
 
 signals:
     void LoginSuccess(QNetworkRequest req);

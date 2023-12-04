@@ -51,6 +51,7 @@ void ChatWindow::ReceiveChatMessage(const QString& msg) {
 
 
 void ChatWindow::Init(QNetworkRequest req) {
+
     //make http get for contacts
     //get history message for each contact
     chatClient->Connect(req);
