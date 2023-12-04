@@ -1,18 +1,14 @@
 #include <QApplication>
-#include "ChatWindow.h"
-#include "ChatClient.h"
 #include "LoginWindow.h"
-#include "Test.h"
+#include "ChatWindow.h"
 
 int main(int argc, char *argv[]) {
     QApplication app{argc, argv};
     LoginWindow loginWindow;
     loginWindow.show();
-    //ChatWindow chatWindow{new ChatClient()};
-    Test test;
+    ChatWindow chatWindow;
 
-    QObject::connect(&loginWindow, &LoginWindow::LoginSuccess, &test, &Test::Init);
-
+    QObject::connect(&loginWindow, &LoginWindow::LoginSuccess, &chatWindow, &ChatWindow::Init);
 
     return QApplication::exec();
 }

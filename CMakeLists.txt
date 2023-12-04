@@ -15,18 +15,13 @@ find_package(Qt6 COMPONENTS
         WebSockets
         REQUIRED)
 
-set(sources main.cpp ChatWindow.cpp ChatClient.cpp
+set(sources main.cpp
+        ChatClient.cpp
+        ChatWindow.cpp
         LoginWindow.cpp
-        LoginWindow.h
-        LoginWindow.ui
         HostInfo.h
-        Test.cpp
-        Test.h
-        Test.ui
-        uiTest2.h
         DbMessage.h
-        User.h
-        UiLoginWindow.h)
+        User.h)
 
 set(libs OpenSSL::SSL Qt::Core Qt::Gui Qt::Widgets Qt::Network Qt::WebSockets)
 

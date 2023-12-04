@@ -32,7 +32,7 @@ private:
     void ConfigureSsl();
 
 signals:
-    void LoginSuccess(QNetworkRequest req);
+    void LoginSuccess(QNetworkRequest req, QString login);
 
 private slots:
     void Login();

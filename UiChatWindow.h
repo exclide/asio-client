@@ -1,5 +1,5 @@
-#ifndef UI_TEST2_H
-#define UI_TEST2_H
+#ifndef UI_CHATWINDOW_H
+#define UI_CHATWINDOW_H
 
 #include <QtCore/QVariant>
 #include <QtWidgets/QApplication>
@@ -14,7 +14,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class UiTest2
+class UiChatWindow
 {
 public:
     QGridLayout *gridLayout;
@@ -22,23 +22,23 @@ public:
 
     std::unordered_map<QString, QWidget*> tabMap;
 
-    void setupUi(QWidget *Test)
+    void setupUi(QWidget *chatWindow)
     {
-        if (Test->objectName().isEmpty())
-            Test->setObjectName("WS Chat");
-        Test->resize(600, 400);
-        gridLayout = new QGridLayout(Test);
+        if (chatWindow->objectName().isEmpty())
+            chatWindow->setObjectName("WS Chat");
+        chatWindow->resize(600, 400);
+        gridLayout = new QGridLayout(chatWindow);
         gridLayout->setObjectName("gridLayout");
 
-        tabWidget = new QTabWidget(Test);
+        tabWidget = new QTabWidget(chatWindow);
         tabWidget->setObjectName("tabWidget");
 
         gridLayout->addWidget(tabWidget, 0, 1, 1, 1);
 
 
-        Test->setWindowTitle("WS Chat");
+        chatWindow->setWindowTitle("WS Chat");
 
-        QMetaObject::connectSlotsByName(Test);
+        QMetaObject::connectSlotsByName(chatWindow);
     }
 
 
@@ -76,9 +76,9 @@ public:
 };
 
 namespace Ui {
-    class Test: public UiTest2 {};
+    class ChatWindow: public UiChatWindow {};
 } // namespace Ui
 
 QT_END_NAMESPACE
 
-#endif // UI_TEST2_H
+#endif // UI_CHATWINDOW_H

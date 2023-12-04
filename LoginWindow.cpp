@@ -7,7 +7,6 @@
 #include "LoginWindow.h"
 #include "UiLoginWindow.h"
 #include "ChatClient.h"
-#include "ChatWindow.h"
 #include "HostInfo.h"
 #include "User.h"
 
@@ -106,7 +105,7 @@ void LoginWindow::OnLoginFinished() {
             //set jwt token
             req.setRawHeader("Authorization", json.value("Token").toString().toLocal8Bit());
 
-            emit LoginSuccess(req);
+            emit LoginSuccess(req, json.value("login").toString());
             this->close();
         }
     } else {
