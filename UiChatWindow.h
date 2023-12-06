@@ -26,7 +26,7 @@ public:
     {
         if (chatWindow->objectName().isEmpty())
             chatWindow->setObjectName("WS Chat");
-        chatWindow->resize(600, 400);
+        chatWindow->resize(550, 400);
         gridLayout = new QGridLayout(chatWindow);
         gridLayout->setObjectName("gridLayout");
 
