@@ -38,12 +38,14 @@ public:
         verticalLayout->setObjectName("verticalLayout");
         line_login = new QLineEdit(LoginWindow);
         line_login->setObjectName("line_login");
+        line_login->setStyleSheet("QLineEdit {height: 30px; width: 100px; color: #ffffff; font-family: JetBrains Mono; font-size: 15px;}");
 
         verticalLayout->addWidget(line_login);
 
         line_password = new QLineEdit(LoginWindow);
         line_password->setObjectName("line_password");
         line_password->setEchoMode(QLineEdit::Password);
+        line_password->setStyleSheet("QLineEdit {height: 30px; width: 100px; color: #ffffff; font-family: JetBrains Mono; font-size: 15px;}");
 
         verticalLayout->addWidget(line_password);
 
@@ -54,11 +56,13 @@ public:
         horizontalLayout->setObjectName("horizontalLayout");
         button_login = new QPushButton(LoginWindow);
         button_login->setObjectName("button_login");
+        button_login->setStyleSheet("QPushButton {height: 30px; width: 50px; color: #ffffff; font-family: JetBrains Mono; font-size: 15px;}");
 
         horizontalLayout->addWidget(button_login);
 
         button_register = new QPushButton(LoginWindow);
         button_register->setObjectName("button_register");
+        button_register->setStyleSheet("QPushButton {height: 30px; width: 50px; color: #ffffff; font-family: JetBrains Mono; font-size: 15px;}");
 
         horizontalLayout->addWidget(button_register);
 
