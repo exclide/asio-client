@@ -11,6 +11,7 @@
 #include <QtWidgets/QWidget>
 #include <vector>
 #include <unordered_map>
+#include "TabWidget.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -26,11 +27,11 @@ public:
     {
         if (chatWindow->objectName().isEmpty())
             chatWindow->setObjectName("WS Chat");
-        chatWindow->resize(550, 400);
+        chatWindow->resize(650, 400);
         gridLayout = new QGridLayout(chatWindow);
         gridLayout->setObjectName("gridLayout");
 
-        tabWidget = new QTabWidget(chatWindow);
+        tabWidget = new TabWidget(chatWindow);
         tabWidget->setObjectName("tabWidget");
 
         gridLayout->addWidget(tabWidget, 0, 1, 1, 1);
@@ -54,11 +55,13 @@ public:
 
         auto line = new QLineEdit(tabNew);
         line->setObjectName(login + "line");
+        line->setStyleSheet("QLineEdit {height: 30px; width: 100px; color: #ffffff; font-family: JetBrains Mono; font-size: 15px;}");
         layout->addWidget(line, 2, 0, 1, 1);
 
         auto button = new QPushButton(tabNew);
         button->setObjectName(login + "button");
         button->setText("send");
+        button->setStyleSheet("QPushButton {height: 30px; width: 100px; color: #ffffff; font-family: JetBrains Mono; font-size: 15px;}");
         layout->addWidget(button, 2, 1, 1, 1);
 
         auto list = new QListView(tabNew);

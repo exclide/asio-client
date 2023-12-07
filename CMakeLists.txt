@@ -21,7 +21,9 @@ set(sources main.cpp
         LoginWindow.cpp
         HostInfo.h
         DbMessage.h
-        User.h)
+        User.h
+        TabBar.h
+        TabWidget.h)
 
 set(libs OpenSSL::SSL Qt::Core Qt::Gui Qt::Widgets Qt::Network Qt::WebSockets)
 
