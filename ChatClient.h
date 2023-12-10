@@ -21,11 +21,14 @@ public:
 
 private:
     void ConfigureSocketForSsl();
-
     QWebSocket ws;
+    bool pongReceived = true;
+    QTimer pingTimer;
+    int pingRespondTimeMsecs = 5000;
 
 signals:
     void MessageReceived(const QString& msg);
+    void ConnectionLost();
 
 private slots:
     void SslErrors(const QList<QSslError> &errors);
@@ -33,6 +36,8 @@ private slots:
     void Connected();
     void Disconnected();
     void ErrorOccurred(QAbstractSocket::SocketError error);
+    void PongReceived(quint64 elapsedTime, const QByteArray& payload);
+    void DoPing();
 };
 
 

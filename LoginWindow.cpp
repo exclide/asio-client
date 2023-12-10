@@ -106,10 +106,15 @@ void LoginWindow::OnLoginFinished() {
             req.setRawHeader("Authorization", json.value("Token").toString().toLocal8Bit());
 
             emit LoginSuccess(req, json.value("login").toString());
-            this->close();
+            this->hide();
         }
     } else {
         qDebug() << "Network request error:" << loginReply->errorString();
     }
+}
+
+void LoginWindow::OnConnectionLost() {
+    ConfigureSsl();
+    this->show();
 }
 

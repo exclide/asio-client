@@ -42,6 +42,10 @@ public:
         QMetaObject::connectSlotsByName(chatWindow);
     }
 
+    void clearTabs() {
+        tabWidget->clear();
+    }
+
 
     void addNewTab(const QString& login = "none") {
 

@@ -34,6 +34,9 @@ private:
 signals:
     void LoginSuccess(QNetworkRequest req, QString login);
 
+public slots:
+    void OnConnectionLost();
+
 private slots:
     void Login();
     void Register();

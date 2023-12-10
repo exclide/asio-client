@@ -4,7 +4,7 @@
 
 #include "ChatClient.h"
 
-ChatClient::ChatClient() {
+ChatClient::ChatClient() : pingTimer(this) {
     ConfigureSocketForSsl();
 
     connect(&ws, &QWebSocket::sslErrors, this, &ChatClient::SslErrors);
@@ -12,6 +12,9 @@ ChatClient::ChatClient() {
     connect(&ws, &QWebSocket::connected, this, &ChatClient::Connected);
     connect(&ws, &QWebSocket::disconnected, this, &ChatClient::Disconnected);
     connect(&ws, &QWebSocket::errorOccurred, this, &ChatClient::ErrorOccurred);
+    connect(&ws, &QWebSocket::pong, this, &ChatClient::PongReceived);
+
+    connect(&pingTimer, &QTimer::timeout, this, &ChatClient::DoPing);
 }
 
 
@@ -47,13 +50,34 @@ void ChatClient::ConfigureSocketForSsl() {
 }
 
 void ChatClient::Connected() {
-    qDebug() << "Connected\n";
+    qDebug() << "Connected";
+
+    pingTimer.start(pingRespondTimeMsecs);
 }
 
 void ChatClient::Disconnected() {
-    qDebug() << "Disconnected\n";
+    qDebug() << "Disconnected";
+
+    pingTimer.stop();
+    emit ConnectionLost();
 }
 
 void ChatClient::ErrorOccurred(QAbstractSocket::SocketError error) {
-    qDebug() << "Error occurred: " << error << "\n";
+    qDebug() << "Error occurred: " << error;
+}
+
+void ChatClient::PongReceived(quint64 elapsedTime, const QByteArray &payload) {
+    qDebug() << "Pong received from server";
+    pongReceived = true;
+}
+
+void ChatClient::DoPing() {
+    if (!pongReceived) {
+        qDebug() << "Server didn't answer ping, closing connection";
+        ws.close();
+        return;
+    }
+
+    pongReceived = false;
+    ws.ping();
 }

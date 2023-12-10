@@ -21,9 +21,11 @@ ChatWindow::~ChatWindow() {
 }
 
 void ChatWindow::Init(QNetworkRequest req, QString login) {
+    ui->clearTabs();
     selfLogin = std::move(login);
     chatClient->Connect(req);
     connect(this->chatClient, &ChatClient::MessageReceived, this, &ChatWindow::HandleJsonData);
+    connect(this->chatClient, &ChatClient::ConnectionLost, this, &ChatWindow::OnConnectionLost);
 
     this->show();
 }
@@ -143,4 +145,10 @@ void ChatWindow::ReceiveMessage(const QString &msg) {
 
     if (sender != selfLogin)
         AddTextToModel(text, sender);
+}
+
+void ChatWindow::OnConnectionLost() {
+    this->hide();
+
+    emit ConnectionLost();
 }

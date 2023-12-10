@@ -9,6 +9,7 @@ int main(int argc, char *argv[]) {
     ChatWindow chatWindow;
 
     QObject::connect(&loginWindow, &LoginWindow::LoginSuccess, &chatWindow, &ChatWindow::Init);
+    QObject::connect(&chatWindow, &ChatWindow::ConnectionLost, &loginWindow, &LoginWindow::OnConnectionLost);
 
     return QApplication::exec();
 }

@@ -24,10 +24,14 @@ public:
     void Init(QNetworkRequest req, QString login);
     void AddDbMessage(const DbMessage &msg);
 
+signals:
+    void ConnectionLost();
+
 private slots:
     void HandleJsonData(const QString& jsonData);
     void ReceiveMessage(const QString& msg);
     void SendChatMessage();
+    void OnConnectionLost();
 
 private:
     Ui::ChatWindow *ui;
