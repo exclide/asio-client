@@ -22,7 +22,7 @@ public:
 private:
     void ConfigureSocketForSsl();
     QWebSocket ws;
-    bool pongReceived = true;
+    bool pongReceived;
     QTimer pingTimer;
     int pingRespondTimeMsecs = 5000;
 

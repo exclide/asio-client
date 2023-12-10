@@ -52,6 +52,7 @@ void ChatClient::ConfigureSocketForSsl() {
 void ChatClient::Connected() {
     qDebug() << "Connected";
 
+    pongReceived = true;
     pingTimer.start(pingRespondTimeMsecs);
 }
 
