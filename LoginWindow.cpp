@@ -10,8 +10,8 @@
 #include "HostInfo.h"
 #include "User.h"
 
-LoginWindow::LoginWindow(QWidget *parent) :
-        QWidget(parent), ui(new Ui::LoginWindow) {
+LoginWindow::LoginWindow(HostInfo hostInfo, QWidget *parent) :
+        QWidget(parent), ui(new Ui::LoginWindow), hostInfo(std::move(hostInfo)) {
     ui->setupUi(this);
 
     connect(ui->button_login, &QPushButton::clicked, this, &LoginWindow::Login);
@@ -55,14 +55,14 @@ void LoginWindow::Register() {
 void LoginWindow::ConfigureSsl() {
     QSslConfiguration cfg = req.sslConfiguration();
     cfg.setProtocol(QSsl::TlsV1_3OrLater);
-    cfg.addCaCertificates("../ssl/rootca.crt", QSsl::Pem);
+    cfg.addCaCertificates("ssl/rootca.crt", QSsl::Pem);
     cfg.setPeerVerifyMode(QSslSocket::VerifyPeer);
     req.setSslConfiguration(cfg);
     req.setPeerVerifyName("usr"); //verify cert CN
 
     url.setScheme("https");
-    url.setHost(HostInfo::ip);
-    url.setPort(HostInfo::port);
+    url.setHost(hostInfo.ip);
+    url.setPort(hostInfo.port);
 
 }
 

@@ -7,7 +7,7 @@
 
 #include <QWidget>
 #include <QNetworkAccessManager>
-
+#include "HostInfo.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class LoginWindow; }
@@ -17,7 +17,7 @@ class LoginWindow : public QWidget {
 Q_OBJECT
 
 public:
-    explicit LoginWindow(QWidget *parent = nullptr);
+    explicit LoginWindow(HostInfo hostInfo, QWidget *parent = nullptr);
 
     ~LoginWindow() override;
 
@@ -25,9 +25,10 @@ private:
     Ui::LoginWindow* ui;
     QNetworkAccessManager* network = new QNetworkAccessManager();
     QNetworkRequest req;
-    QNetworkReply* loginReply;
-    QNetworkReply* registerReply;
+    QNetworkReply* loginReply = nullptr;
+    QNetworkReply* registerReply = nullptr;
     QUrl url;
+    HostInfo hostInfo;
 
     void ConfigureSsl();
 

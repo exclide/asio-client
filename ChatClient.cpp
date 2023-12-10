@@ -44,7 +44,7 @@ void ChatClient::ConfigureSocketForSsl() {
 
     QSslConfiguration cfg = ws.sslConfiguration();
     cfg.setProtocol(QSsl::TlsV1_3OrLater);
-    cfg.addCaCertificates("../ssl/rootca.crt", QSsl::Pem);
+    cfg.addCaCertificates("ssl/rootca.crt", QSsl::Pem);
     cfg.setPeerVerifyMode(QSslSocket::VerifyPeer); //verify server cert is valid loaded CA
     ws.setSslConfiguration(cfg);
 }
